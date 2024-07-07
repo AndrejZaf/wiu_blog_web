@@ -1,12 +1,23 @@
-import "./App.css";
-import { Button } from "./components/ui/button";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
+import Keycloak from "keycloak-js";
+import KeycloakProvider from "./features/keycloak/KeycloakProvider";
+import "@blocknote/mantine/style.css";
+import "@blocknote/core/fonts/inter.css";
+
+const keycloakSetting = {
+  url: "http://localhost:8090/",
+  realm: "writeitup",
+  clientId: "wiu-web",
+};
+
+const authInstance = new Keycloak(keycloakSetting);
 
 function App() {
   return (
-    <>
-      <Button variant="outline">Test</Button>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-    </>
+    <KeycloakProvider client={authInstance}>
+      <RouterProvider router={router} />
+    </KeycloakProvider>
   );
 }
 
