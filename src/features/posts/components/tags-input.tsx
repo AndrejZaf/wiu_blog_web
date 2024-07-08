@@ -13,7 +13,6 @@ export default function TagsInput({ tags, setTags }: TagsInputProps) {
       <MultipleSelector
         value={tags}
         onChange={setTags}
-        placeholder="Tags"
         creatable={true}
         className="focus-visible:ring-transparent"
       />

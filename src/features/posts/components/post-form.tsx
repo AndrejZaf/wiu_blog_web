@@ -19,6 +19,11 @@ import {
 import { ChangeEvent, useState } from "react";
 import TagsInput from "./tags-input";
 import { Option } from "@/components/ui/multiple-selector";
+import axios from "axios";
+import { axiosInstance } from "@/utils/axios.api";
+import { CreatePostModel } from "../models/create-post.model";
+import { useKeycloak } from "@/features/keycloak/useKeycloak";
+import { PostStatus } from "../models/post-status.enum";
 
 type PostFormProps = {};
 
@@ -45,6 +50,7 @@ async function getImageData(
 export default function PostForm() {
   const editor = useCreateBlockNote();
   const [tags, setTags] = useState<Option[]>([]);
+  const { keycloak } = useKeycloak();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,10 +59,22 @@ export default function PostForm() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
-    console.log(tags);
-    console.log(editor.blocksToHTMLLossy());
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const content = await editor.blocksToHTMLLossy();
+    const tagStrings = tags.map((tag) => tag.value);
+    const postData: CreatePostModel = {
+      title: data.title,
+      content: content,
+      imageData: data.file!,
+      tags: tagStrings,
+      status: PostStatus.DRAFT,
+    };
+    axiosInstance.post("/posts", postData, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${keycloak.token}`,
+      },
+    });
   };
 
   return (
