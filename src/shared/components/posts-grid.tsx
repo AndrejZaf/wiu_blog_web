@@ -9,7 +9,7 @@ export default function PostsGrid({ posts }: PostsGridProps) {
   return (
     <div className="flex flex-wrap gap-12">
       {posts.map((post) => (
-        <Post post={post} />
+        <Post key={post.id} post={post} />
       ))}
     </div>
   );

@@ -1,13 +1,19 @@
-import Header from "./components/header";
 import PostsGrid from "@/shared/components/posts-grid";
 import { myPosts } from "./mocks/posts.mock";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function PostsContainer() {
+  const navigate = useNavigate();
   return (
     <div className="container">
-      <Header />
+      <div className="flex justify-end mb-4">
+        <Button variant="outline" onClick={() => navigate("/posts/new")}>
+          Create Post
+        </Button>
+      </div>
       <section className="mb-8">
         <Tabs defaultValue="published">
           <div className="flex justify-between">
@@ -29,7 +35,7 @@ export default function PostsContainer() {
           <TabsContent value="published">
             <PostsGrid posts={myPosts} />
           </TabsContent>
-          <TabsContent value="draft">Change your password here.</TabsContent>
+          <TabsContent value="draft">Draft Posts.</TabsContent>
         </Tabs>
       </section>
     </div>
