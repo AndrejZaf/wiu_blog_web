@@ -1,4 +1,4 @@
-import { Home, LucideProps, Settings, Users } from "lucide-react";
+import { Home, LucideProps, Search, Settings, StickyNote } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export interface NavRoute {
@@ -11,14 +11,19 @@ export interface NavRoute {
 
 export const routes: NavRoute[] = [
   {
+    title: "Search",
+    to: "/search",
+    icon: Search,
+  },
+  {
     title: "Home",
     to: "/",
     icon: Home,
   },
   {
-    title: "Search",
-    to: "/search",
-    icon: Users,
+    title: "Posts",
+    to: "/posts",
+    icon: StickyNote,
   },
   {
     title: "Settings",
