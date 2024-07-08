@@ -16,7 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
+import TagsInput from "./tags-input";
+import { Option } from "@/components/ui/multiple-selector";
 
 type PostFormProps = {};
 
@@ -42,6 +44,7 @@ async function getImageData(
 
 export default function PostForm() {
   const editor = useCreateBlockNote();
+  const [tags, setTags] = useState<Option[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,6 +55,7 @@ export default function PostForm() {
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log(data);
+    console.log(tags);
     console.log(editor.blocksToHTMLLossy());
   };
 
@@ -101,11 +105,14 @@ export default function PostForm() {
           }}
         />
 
-        <div className="lg:w-[33%] aspect-video bg-gray-300 mx-auto mt-4 rounded-md">
-          {form.getValues().file && (
-            <img className="w-full h-full" src={form.getValues().file} />
-          )}
-        </div>
+        {form.getValues().file ? (
+          <img
+            className="w-[33%] mx-auto mt-4 rounded-md"
+            src={form.getValues().file}
+          />
+        ) : (
+          <div className="lg:w-[33%] aspect-video bg-gray-300 mx-auto mt-4 rounded-md"></div>
+        )}
 
         <div className="editor h-max-[250px]">
           <Label>Content</Label>
@@ -116,6 +123,7 @@ export default function PostForm() {
             editor={editor}
           />
         </div>
+        <TagsInput tags={tags} setTags={setTags} />
         <div className="flex gap-4 mt-4 justify-end">
           <Button variant="outline" type="submit">
             Save as draft
