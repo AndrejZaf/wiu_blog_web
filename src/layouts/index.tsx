@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import { useKeycloak } from "@/features/keycloak/useKeycloak";
 import { routes } from "@/nav-routes";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function Layout() {
   const { keycloak } = useKeycloak();
@@ -119,6 +120,7 @@ export default function Layout() {
           </header>
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 dark:bg-background">
             <Outlet />
+            <Toaster />
           </main>
         </div>
       </div>

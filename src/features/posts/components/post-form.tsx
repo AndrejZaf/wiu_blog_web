@@ -16,16 +16,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { ChangeEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import TagsInput from "./tags-input";
 import { Option } from "@/components/ui/multiple-selector";
-import axios from "axios";
 import { axiosInstance } from "@/utils/axios.api";
 import { CreatePostModel } from "../models/create-post.model";
 import { useKeycloak } from "@/features/keycloak/useKeycloak";
 import { PostStatus } from "../models/post-status.enum";
-
-type PostFormProps = {};
+import { getImageData } from "@/utils/image-processing.util";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import { PostModel } from "@/shared/models/post.model";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -34,52 +35,109 @@ const formSchema = z.object({
   file: z.string().optional(),
 });
 
-async function getImageData(
-  event: ChangeEvent<HTMLInputElement>,
-  callback: (result: string | ArrayBuffer | null) => void
-) {
-  const reader = new FileReader();
-  reader.onload = () => callback(reader.result);
-  reader.onerror = () => {
-    callback("");
-    return;
-  };
-  reader.readAsDataURL(event.target.files![0]);
-}
+type PostProps = {
+  post?: PostModel;
+};
 
-export default function PostForm() {
+export default function PostForm({ post }: PostProps) {
+  const navigate = useNavigate();
   const editor = useCreateBlockNote();
+  const { toast } = useToast();
   const [tags, setTags] = useState<Option[]>([]);
   const { keycloak } = useKeycloak();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-      file: "",
-    },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  useEffect(() => {
+    if (post) {
+      form.reset({
+        title: post.title || "",
+        file: post.imageData || "",
+      });
+      editor
+        .tryParseHTMLToBlocks(post.content)
+        .then((blocks) => editor.replaceBlocks(editor.document, blocks));
+      setTags(post.tags.map((tag) => ({ value: tag, label: tag })));
+    }
+  }, [form, post, editor]);
+
+  const onSubmit = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    status: PostStatus
+  ) => {
+    event.preventDefault();
+    const data = form.getValues();
     const content = await editor.blocksToHTMLLossy();
     const tagStrings = tags.map((tag) => tag.value);
-    const postData: CreatePostModel = {
-      title: data.title,
-      content: content,
-      imageData: data.file!,
-      tags: tagStrings,
-      status: PostStatus.DRAFT,
-    };
-    axiosInstance.post("/posts", postData, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${keycloak.token}`,
-      },
-    });
+
+    if (post) {
+      const postData: PostModel = {
+        id: post.id,
+        title: data.title,
+        content: content,
+        imageData: data.file!,
+        tags: tagStrings,
+        status: status,
+      };
+      axiosInstance
+        .put("/posts", postData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        })
+        .then((response) => {
+          toast({
+            title: "We are changing the ink.. Our printing machine is ready!",
+            description: "Your post has been successfully edited.",
+          });
+          navigate(`/posts/${response.data.id}`);
+        })
+        .catch((error) => {
+          toast({
+            variant: "destructive",
+            title: "Oh, no.. We have a problem!",
+            description: "An error occurred, please try again later",
+          });
+          console.error(error.message);
+        });
+    } else {
+      const postData: CreatePostModel = {
+        title: data.title,
+        content: content,
+        imageData: data.file!,
+        tags: tagStrings,
+        status: status,
+      };
+      axiosInstance
+        .post("/posts", postData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        })
+        .then((response) => {
+          toast({
+            title: "Finally.. Our printing machine is ready!",
+            description: "Your post has been successfully created.",
+          });
+          navigate(`/posts/${response.data.id}`);
+        })
+        .catch((error) => {
+          toast({
+            variant: "destructive",
+            title: "Oh, no.. We have a problem!",
+            description: "An error occurred, please try again later",
+          });
+          console.error(error.message);
+        });
+    }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+      <form className="w-full">
         <FormField
           control={form.control}
           name="title"
@@ -112,7 +170,6 @@ export default function PostForm() {
                     type="file"
                     {...rest}
                     onChange={(event) => {
-                      onChange("");
                       getImageData(event, onChange);
                     }}
                   />
@@ -142,11 +199,27 @@ export default function PostForm() {
           />
         </div>
         <TagsInput tags={tags} setTags={setTags} />
+        {post && post.status === PostStatus.DRAFT && (
+          <div className="text-right">
+            <small className="text-sm font-medium leading-none">
+              The post is marked as draft as of now
+            </small>
+          </div>
+        )}
         <div className="flex gap-4 mt-4 justify-end">
-          <Button variant="outline" type="submit">
+          <Button
+            variant="outline"
+            type="submit"
+            onClick={(event) => onSubmit(event, PostStatus.DRAFT)}
+          >
             Save as draft
           </Button>
-          <Button type="submit">Publish</Button>
+          <Button
+            type="submit"
+            onClick={(event) => onSubmit(event, PostStatus.PUBLISHED)}
+          >
+            Publish
+          </Button>
         </div>
       </form>
     </Form>

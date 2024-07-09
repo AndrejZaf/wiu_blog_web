@@ -24,15 +24,24 @@ export const router = createBrowserRouter([
       },
       {
         path: "posts",
-        element: <Posts />,
-      },
-      {
-        path: "posts/new",
-        element: <Post />,
-      },
-      {
-        path: "posts/:id",
-        element: <PreviewPost />,
+        children: [
+          {
+            path: "",
+            element: <Posts />,
+          },
+          {
+            path: ":id",
+            element: <PreviewPost />,
+          },
+          {
+            path: ":id/edit",
+            element: <Post />,
+          },
+          {
+            path: "new",
+            element: <Post />,
+          },
+        ],
       },
       {
         path: "*",
