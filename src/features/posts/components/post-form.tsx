@@ -55,9 +55,8 @@ export default function PostForm({ post }: PostProps) {
         title: post.title || "",
         file: post.imageData || "",
       });
-      editor
-        .tryParseHTMLToBlocks(post.content)
-        .then((blocks) => editor.replaceBlocks(editor.document, blocks));
+
+      editor.replaceBlocks(editor.document, JSON.parse(post.contentBlocks));
       setTags(post.tags.map((tag) => ({ value: tag, label: tag })));
     }
   }, [form, post, editor]);
@@ -70,11 +69,11 @@ export default function PostForm({ post }: PostProps) {
     const data = form.getValues();
     const content = await editor.blocksToHTMLLossy();
     const tagStrings = tags.map((tag) => tag.value);
-
     if (post) {
       const postData: PostModel = {
         id: post.id,
         title: data.title,
+        contentBlocks: JSON.stringify(editor.document),
         content: content,
         imageData: data.file!,
         tags: tagStrings,
@@ -106,6 +105,7 @@ export default function PostForm({ post }: PostProps) {
       const postData: CreatePostModel = {
         title: data.title,
         content: content,
+        contentBlocks: JSON.stringify(editor.document),
         imageData: data.file!,
         tags: tagStrings,
         status: status,
