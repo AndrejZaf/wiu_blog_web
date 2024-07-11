@@ -1,5 +1,4 @@
 import PostsGrid from "@/shared/components/posts-grid";
-import { myPosts } from "./mocks/posts.mock";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -16,10 +15,11 @@ export default function PostsContainer() {
     PostStatus.PUBLISHED
   );
   const [posts, setPosts] = useState<PostModel[]>([]);
-  const { keycloak } = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
   const { pathname } = useLocation();
+
   useEffect(() => {
-    if (pathname === "/my-posts" && keycloak.authenticated) {
+    if (pathname === "/my-posts" && initialized && keycloak.authenticated) {
       axiosInstance
         .get(`/posts/me?page=${0}&size=${10}&status=${selectedTab}`, {
           headers: {
@@ -29,7 +29,7 @@ export default function PostsContainer() {
         })
         .then((response) => setPosts(response.data.content));
     }
-  }, [keycloak.authenticated, keycloak.token, pathname, selectedTab]);
+  }, [keycloak, pathname, selectedTab, initialized]);
 
   return (
     <div className="container">
