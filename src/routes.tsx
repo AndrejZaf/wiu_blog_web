@@ -44,6 +44,10 @@ export const router = createBrowserRouter([
         ],
       },
       {
+        path: "my-posts",
+        element: <Posts />,
+      },
+      {
         path: "*",
         element: <h1>404</h1>,
       },

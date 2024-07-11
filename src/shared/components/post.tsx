@@ -6,8 +6,8 @@ type PostProps = {
 
 export default function Post({ post }: PostProps) {
   return (
-    <div className="cursor-pointer">
-      <div className="h-52 md:h-40 lg:h-56 rounded-xl bg-gray-100"></div>
+    <div className="flex flex-auto flex-col h-full">
+      <img className="flex-1" src={post.imageData} alt={post.title} />
       <div className="content mt-2 px-1">
         <h2 className="scroll-m-20 pb-2 text-md font-semibold tracking-tight first:mt-0 truncate">
           {post.title}

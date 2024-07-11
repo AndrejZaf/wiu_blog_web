@@ -21,8 +21,8 @@ export const routes: NavRoute[] = [
     icon: Home,
   },
   {
-    title: "Posts",
-    to: "/posts",
+    title: "My Posts",
+    to: "/my-posts",
     icon: StickyNote,
   },
   {
