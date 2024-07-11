@@ -5,7 +5,8 @@ export interface PostModel {
   title: string;
   content: string;
   contentBlocks: string;
-  createdDate?: Date;
+  createdDate?: string;
+  readTime?: number;
   tags: string[];
   imageData: string;
   status: PostStatus;

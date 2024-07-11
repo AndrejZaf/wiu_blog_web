@@ -12,8 +12,6 @@ type PreviewPostProps = {
 export default function PreviewPost({ post }: PreviewPostProps) {
   const [editor, setEditor] = useState<BlockNoteEditor>();
 
-  console.log(post);
-
   useEffect(() => {
     setEditor(
       BlockNoteEditor.create({
@@ -28,6 +26,14 @@ export default function PreviewPost({ post }: PreviewPostProps) {
     );
   }, [post]);
 
+  function parseDate(createdDate: string) {
+    const date = new Date(createdDate);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
   return (
     <div>
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center">
@@ -39,11 +45,13 @@ export default function PreviewPost({ post }: PreviewPostProps) {
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <p className="text-sm font-medium">AndrejZaf</p>
+          <p className="text-sm font-medium text-gray-600">AndrejZaf</p>
         </div>
         <div className="post-core-data text-sm font-medium">
-          <p>Jul 11, 2024</p>
-          <p>7 min. read</p>
+          <p className="text-gray-600">
+            {post && parseDate(post.createdDate!)}
+          </p>
+          <p className="text-gray-600">{post && post.readTime} min. read</p>
         </div>
       </div>
       <hr />

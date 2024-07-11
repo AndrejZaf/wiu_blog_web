@@ -12,7 +12,9 @@ export default function Post({ post }: PostProps) {
         <h2 className="scroll-m-20 pb-2 text-md font-semibold tracking-tight first:mt-0 truncate">
           {post.title}
         </h2>
-        <div className="line-clamp-2 text-sm leading-none">{post.content}</div>
+        <div className="line-clamp-2 text-sm leading-none text-justify">
+          {post.content}
+        </div>
       </div>
     </div>
   );
