@@ -32,7 +32,7 @@ const formSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 3 characters.",
   }),
-  file: z.string().optional(),
+  file: z.string(),
 });
 
 type PostProps = {
@@ -47,6 +47,10 @@ export default function PostForm({ post }: PostProps) {
   const { keycloak } = useKeycloak();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      file: "",
+    },
   });
 
   useEffect(() => {
