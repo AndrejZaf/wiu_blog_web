@@ -4,6 +4,7 @@ import Posts from "./pages/Posts";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
 import PreviewPost from "./pages/PreviewPost";
+import PrivateRoute from "./shared/components/private-route";
 
 export const router = createBrowserRouter([
   {
@@ -35,17 +36,17 @@ export const router = createBrowserRouter([
           },
           {
             path: ":id/edit",
-            element: <Post />,
+            element: <PrivateRoute Component={Post} />,
           },
           {
             path: "new",
-            element: <Post />,
+            element: <PrivateRoute Component={Post} />,
           },
         ],
       },
       {
         path: "my-posts",
-        element: <Posts />,
+        element: <PrivateRoute Component={Posts} />,
       },
       {
         path: "*",

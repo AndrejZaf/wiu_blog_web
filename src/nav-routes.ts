@@ -7,6 +7,7 @@ export interface NavRoute {
   icon: ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
+  authenticated: boolean;
 }
 
 export const routes: NavRoute[] = [
@@ -14,20 +15,24 @@ export const routes: NavRoute[] = [
     title: "Search",
     to: "/search",
     icon: Search,
+    authenticated: false,
   },
   {
     title: "Home",
     to: "/",
     icon: Home,
+    authenticated: false,
   },
   {
     title: "My Posts",
     to: "/my-posts",
     icon: StickyNote,
+    authenticated: true,
   },
   {
     title: "Settings",
     to: "/settings",
     icon: Settings,
+    authenticated: true,
   },
 ];
