@@ -2,34 +2,59 @@ import PostsGrid from "@/shared/components/posts-grid";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { PostStatus } from "./models/post-status.enum";
 import { axiosInstance } from "@/utils/axios.api";
 import { useKeycloak } from "../keycloak/useKeycloak";
-import { PostModel } from "@/shared/models/post.model";
+import { usePostsContext } from "./contexts/postsContext";
 
-export default function PostsContainer() {
+export default function MyPostsContainer() {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<PostStatus>(
     PostStatus.PUBLISHED
   );
-  const [posts, setPosts] = useState<PostModel[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const { setPosts, search, debouncedInputValue, setSearch, setHasMore } =
+    usePostsContext();
   const { keycloak, initialized } = useKeycloak();
-  const { pathname } = useLocation();
-
   useEffect(() => {
-    if (pathname === "/my-posts" && initialized && keycloak.authenticated) {
-      axiosInstance
-        .get(`/posts/me?page=${0}&size=${10}&status=${selectedTab}`, {
+    axiosInstance
+      .get(
+        `/posts/me?page=${0}&size=${10}&status=${selectedTab}${
+          debouncedInputValue && `&search=${debouncedInputValue}`
+        }`,
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${keycloak.token}`,
           },
-        })
-        .then((response) => setPosts(response.data.content));
-    }
-  }, [keycloak, pathname, selectedTab, initialized]);
+        }
+      )
+      .then((response) => {
+        setPosts(response.data.content);
+      });
+  }, [keycloak, selectedTab, initialized, setPosts, debouncedInputValue]);
+
+  function fetchMoreData() {
+    axiosInstance
+      .get(
+        `/posts/me?page=${page}&size=${10}&status=${selectedTab}${
+          debouncedInputValue && `&search=${debouncedInputValue}`
+        }`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        setPage((currentPage) => currentPage + 1);
+        setPosts((currentPosts) => [...currentPosts, ...response.data.content]);
+        setHasMore(response.data.content.length > 0);
+      });
+  }
 
   return (
     <div className="container">
@@ -41,14 +66,15 @@ export default function PostsContainer() {
       <section className="mb-8">
         <Tabs
           defaultValue={selectedTab}
-          onValueChange={(value) =>
-            setSelectedTab(PostStatus[value as keyof typeof PostStatus])
-          }
+          onValueChange={(value) => {
+            setSelectedTab(PostStatus[value as keyof typeof PostStatus]);
+            setSearch("");
+          }}
         >
           <div className="flex justify-between">
             <h2 className="scroll-m-20 mb-2 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
               My Posts
-            </h2>{" "}
+            </h2>
             <TabsList>
               <TabsTrigger value={PostStatus.PUBLISHED}>Published</TabsTrigger>
               <TabsTrigger value={PostStatus.DRAFT}>Draft</TabsTrigger>
@@ -58,14 +84,16 @@ export default function PostsContainer() {
             className="w-full border-0 focus-visible:ring-transparent"
             type="text"
             placeholder="Search by title, keyword, tag or whatever you want"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
           />
           <hr className="mb-2" />
 
           <TabsContent value={PostStatus.PUBLISHED}>
-            <PostsGrid posts={posts} />
+            <PostsGrid fetchMoreData={fetchMoreData} />
           </TabsContent>
           <TabsContent value={PostStatus.DRAFT}>
-            <PostsGrid posts={posts} />
+            <PostsGrid fetchMoreData={fetchMoreData} />
           </TabsContent>
         </Tabs>
       </section>

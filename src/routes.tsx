@@ -1,10 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./layouts";
-import Posts from "./pages/Posts";
+import MyPosts from "./pages/MyPosts";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
 import PreviewPost from "./pages/PreviewPost";
 import PrivateRoute from "./shared/components/private-route";
+import Settings from "./pages/Settings";
 
 export const router = createBrowserRouter([
   {
@@ -21,14 +22,14 @@ export const router = createBrowserRouter([
       },
       {
         path: "settings",
-        element: <h1>settings</h1>,
+        element: <PrivateRoute Component={Settings} />,
       },
       {
         path: "posts",
         children: [
           {
             path: "",
-            element: <Posts />,
+            element: <h1>posts</h1>,
           },
           {
             path: ":id",
@@ -46,7 +47,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "my-posts",
-        element: <PrivateRoute Component={Posts} />,
+        element: <PrivateRoute Component={MyPosts} />,
       },
       {
         path: "*",
