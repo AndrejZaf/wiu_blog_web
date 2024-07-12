@@ -33,8 +33,16 @@ export default function MyPostsContainer() {
       )
       .then((response) => {
         setPosts(response.data.content);
+        setHasMore(response.data.content.length > 0);
       });
-  }, [keycloak, selectedTab, initialized, setPosts, debouncedInputValue]);
+  }, [
+    keycloak,
+    selectedTab,
+    initialized,
+    setPosts,
+    debouncedInputValue,
+    setHasMore,
+  ]);
 
   function fetchMoreData() {
     axiosInstance
