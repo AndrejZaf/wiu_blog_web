@@ -1,6 +1,5 @@
 import { PostModel } from "@/shared/models/post.model";
-import { createContext, useContext, useState } from "react";
-import { useDebounce } from "use-debounce";
+import { createContext } from "react";
 
 type PostsContextState = {
   posts: PostModel[];
@@ -12,7 +11,7 @@ type PostsContextState = {
   setHasMore: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const PostsContext = createContext<PostsContextState>({
+export const PostsContext = createContext<PostsContextState>({
   posts: [],
   setPosts: () => null,
   search: "",
@@ -21,30 +20,3 @@ const PostsContext = createContext<PostsContextState>({
   hasMore: true,
   setHasMore: () => null,
 });
-
-export function PostsProvider({ children }: React.PropsWithChildren<object>) {
-  const [posts, setPosts] = useState<PostModel[]>([]);
-  const [search, setSearch] = useState<string>("");
-  const [debouncedInputValue] = useDebounce(search, 500);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-
-  return (
-    <PostsContext.Provider
-      value={{
-        posts,
-        setPosts,
-        search,
-        setSearch,
-        debouncedInputValue,
-        hasMore,
-        setHasMore,
-      }}
-    >
-      {children}
-    </PostsContext.Provider>
-  );
-}
-
-export function usePostsContext() {
-  return useContext(PostsContext);
-}

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { PostStatus } from "./models/post-status.enum";
 import { axiosInstance } from "@/utils/axios.api";
 import { useKeycloak } from "../keycloak/useKeycloak";
-import { usePostsContext } from "./contexts/postsContext";
+import { usePostsContext } from "./contexts/usePostsContext";
 
 export default function MyPostsContainer() {
   const navigate = useNavigate();

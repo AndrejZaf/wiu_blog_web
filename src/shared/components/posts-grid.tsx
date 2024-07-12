@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Post from "./post";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { usePostsContext } from "@/features/posts/contexts/postsContext";
+import { usePostsContext } from "@/features/posts/contexts/usePostsContext";
 
 type PostsGridProps = {
   fetchMoreData(): void;
