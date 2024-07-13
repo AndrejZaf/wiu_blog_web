@@ -23,7 +23,7 @@ export default function Layout() {
   return (
     <>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-        <div className="hidden border-r dark:border-muted bg-muted/40 dark:bg-background md:block">
+        <div className="hidden border-r dark:border-muted bg-[#F7F6F3] dark:bg-background md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">
             <div className="flex h-14 items-center border-b dark:border-muted px-4 lg:h-[60px] lg:px-6">
               <Link
@@ -77,7 +77,7 @@ export default function Layout() {
           </div>
         </div>
         <div className="flex flex-col">
-          <header className="flex lg:hidden h-14 items-center gap-4 border-b dark:border-muted bg-muted/40 dark:bg-background px-4 lg:h-[60px] lg:px-6">
+          <header className="flex lg:hidden h-14 items-center gap-4 border-b dark:border-muted bg-[#F7F6F3] dark:bg-background px-4 lg:h-[60px] lg:px-6">
             <Sheet>
               <SheetTrigger asChild>
                 <Button
@@ -131,7 +131,7 @@ export default function Layout() {
               </SheetContent>
             </Sheet>
           </header>
-          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 dark:bg-background">
+          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-[#ffffff] dark:bg-background">
             <Outlet />
             <Toaster />
           </main>

@@ -55,8 +55,12 @@ export default function PreviewPost({ post }: PreviewPostProps) {
         </div>
       </div>
       <hr />
-      <div className="cover-image mt-6 aspect-video lg:h-[450px] mx-auto">
-        <img className="h-[inherit]" src={post.imageData} alt={post.title} />
+      <div className="cover-image mt-6 aspect-video lg:h-[450px] w-full">
+        <img
+          className="h-[inherit] mx-auto"
+          src={post.imageData}
+          alt={post.title}
+        />
       </div>
       {editor && (
         <BlockNoteView
