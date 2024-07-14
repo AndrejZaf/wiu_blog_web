@@ -50,14 +50,19 @@ export default function PreviewPostContainer() {
     <>
       {post && (
         <div className="container">
-          <div className="post-buttons flex gap-2 justify-end">
-            <Link to={`/posts/${post.id}/edit`}>
-              <Button variant="outline">Edit</Button>
-            </Link>
-            <Button variant="default" onClick={() => setShowDeleteDialog(true)}>
-              Delete
-            </Button>
-          </div>
+          {keycloak.authenticated === post.authorId && (
+            <div className="post-buttons flex gap-2 justify-end">
+              <Link to={`/posts/${post.id}/edit`}>
+                <Button variant="outline">Edit</Button>
+              </Link>
+              <Button
+                variant="default"
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                Delete
+              </Button>
+            </div>
+          )}
           <PreviewPost post={post} />
           <ConfirmationDialog
             showDialog={showDeleteDialog}

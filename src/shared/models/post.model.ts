@@ -2,6 +2,7 @@ import { PostStatus } from "@/features/posts/models/post-status.enum";
 
 export interface PostModel {
   id: string;
+  authorId?: string;
   title: string;
   content: string;
   contentBlocks: string;
