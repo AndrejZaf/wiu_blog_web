@@ -1,3 +1,5 @@
+import SettingsContainer from "@/features/settings/settings-container";
+
 export default function Settings() {
-  return <div>Settings</div>;
+  return <SettingsContainer />;
 }
