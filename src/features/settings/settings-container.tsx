@@ -1,14 +1,17 @@
 import { axiosInstance } from "@/utils/axios.api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useKeycloak } from "../keycloak/useKeycloak";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { UserModel } from "./models/user.models";
+import PlaceholderImage from "../../assets/placeholder-profile.jpg";
 
 export default function SettingsContainer() {
   const { keycloak } = useKeycloak();
+  const [user, setUser] = useState<UserModel>();
 
   useEffect(() => {
     axiosInstance
@@ -19,15 +22,17 @@ export default function SettingsContainer() {
         },
       })
       .then((response) => {
-        console.log(response);
+        setUser(response.data);
       });
   }, [keycloak.token]);
   return (
-    <div className="container flex flex-col items-center gap-6 w-6/12">
+    <div className="container flex flex-col items-center gap-6">
       <div className="avatar flex flex-col items-center gap-4">
         <Avatar className="h-24 w-24">
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage
+            src={user?.imageData ? user.imageData : PlaceholderImage}
+          />
+          <AvatarFallback>WIU</AvatarFallback>
         </Avatar>
         <div className="grid w-full items-center gap-1.5">
           <Input id="picture" type="file" />
@@ -41,7 +46,7 @@ export default function SettingsContainer() {
             id="email"
             type="email"
             placeholder="Email"
-            value={"email"}
+            defaultValue={user?.email}
           />
         </div>
         <div className="grid w-full items-center gap-1.5">
@@ -51,12 +56,16 @@ export default function SettingsContainer() {
             id="username"
             type="text"
             placeholder="Email"
-            value={"username"}
+            defaultValue={user?.username}
           />
         </div>
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="biography">Biography</Label>
-          <Textarea id="biography" placeholder="Type your message here." />
+          <Textarea
+            id="biography"
+            placeholder="Type your message here."
+            defaultValue={user?.bio}
+          />
         </div>
       </div>
       <div className="flex flex-col w-full items-end">
