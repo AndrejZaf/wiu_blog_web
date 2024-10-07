@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useKeycloak } from "@/features/keycloak/useKeycloak";
 import { routes } from "@/nav-routes";
 import { Toaster } from "@/components/ui/toaster";
+import WiuLogo from "../assets/wiu-logo.svg";
 
 export default function Layout() {
   const { keycloak } = useKeycloak();
@@ -30,7 +31,7 @@ export default function Layout() {
                 to="/"
                 className="flex items-center gap-2 font-semibold dark:text-white"
               >
-                <Shield className="h-6 w-6" />
+                <img src={WiuLogo} alt="Write It Up" className="h-6 w-6" />
                 <span className="">Write It Up</span>
               </Link>
             </div>

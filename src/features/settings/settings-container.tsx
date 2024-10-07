@@ -8,6 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { UserModel } from "./models/user.models";
 import PlaceholderImage from "../../assets/placeholder-profile.jpg";
+import { z } from "zod";
+
+const formSchema = z.object({
+  bio: z.string(),
+  imageData: z.string(),
+});
 
 export default function SettingsContainer() {
   const { keycloak } = useKeycloak();
